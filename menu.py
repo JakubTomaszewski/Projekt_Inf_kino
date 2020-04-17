@@ -1,125 +1,90 @@
-import numpy as np
-import cv2
-# import csv
+import time
+import curses
+
+movie_list = ['A WIĘC WOJNA', 'ABRAHAM LINCOLN: ŁOWCA WAMPIRÓW', 'ABSOLUTNIE FANTASTYCZNE: FILM', 'ACH ŚPIJ KOCHANIE', 'AD ASTRA', 'ADOLF H. JA WAM POKAŻĘ', 'ADRENALINA 2. POD NAPIĘCIEM', 'ADWOKAT', 'AFONIA I PSZCZOŁY', 'AFTER', 'AGENCI', 'AGENT I PÓŁ']
 
 
-def display_movies(movies_list):
-    for movie in movies_list:
-        print('+++++++++++++++++++++++++++++++')
-        print(movie)
+def display_menu(stdscr, selected_row_idx):
+    # Clear the screen
+    stdscr.clear()
+    # Getting the screen size
+    height, width = stdscr.getmaxyx()
+    # Printing some info on the screen
+    stdscr.addstr(2, 1, 'DOSTĘPNE FILMY:')
+    stdscr.addstr(height - 2, 1, 'Aby wyjsc nacisnij ESC')
+    # Printing each movie on the screen
+    for i, row in enumerate(movie_list):
+        x = width//2 - len(row)//2
+        y = height//2 - len(movie_list)//2 + i  # Starting from the center
+        if i == selected_row_idx:
+            # Choosing the color pair 1 and turning it on
+            stdscr.attron(curses.color_pair(1))
+            stdscr.addstr(y, x, row)
+            stdscr.attroff(curses.color_pair(1))
+        else:
+            stdscr.addstr(y, x, row)
+
+    # Refreshing screen
+    stdscr.refresh()
 
 
-def display_text_info(scr, movie, font):
-    '''Displays the movie title and number of taken seats'''
-    # Setting font
-    taken_seats = int(seats.sum())
-    screen_with_text = scr.copy()
+def main_menu(stdscr):
+    curses.curs_set(0)
+    # Initializing a color pair
+    curses.init_pair(1, curses.COLOR_BLACK, curses.COLOR_WHITE)  # background color, foreground color
+    current_row_idx = 0
 
-    # Display title
-    screen_with_text = cv2.putText(screen_with_text, movie, (margin_x, 35), font, 0.7, (255, 255, 255), 1)
-    # Display taken places
-    screen_with_text = cv2.putText(screen_with_text, f'Liczba osob: {taken_seats}', (margin_x, 60), font, 0.7, (255, 255, 255), 1)
-    return screen_with_text
+    # Showing the menu
+    display_menu(stdscr, current_row_idx)
 
-
-def show_seats(scr, seats_param, movie: str, indices):
-    assert isinstance(movie, str)
-    new_screen = scr.copy()
-    font = cv2.FONT_HERSHEY_DUPLEX
-    j = 0
-
-    for row in seats_param:
-        i = 0
-        new_screen = cv2.putText(new_screen, f'{tuple(indices.keys())[j]}', (margin_x - 10, margin_y - 20 + 37 * (j+1)),
-                                 font, 0.5, (255, 255, 255), 1)
-        new_screen = cv2.putText(new_screen, 'Nacisnij ESC aby wyjsc', (margin_x, screen_height - 15),
-                                 font, 0.5, (255, 255, 255), 1)
-        for seat in row:
-            square_height = 35
-            square_width = 25
-            square_x_first = margin_x + square_width * i
-            square_y_first = margin_y + square_height * j
-            square_x_second = margin_x + square_width * (i + 1)
-            square_y_second = margin_y + square_height * (j + 1)
-
-            # Col label
-            if j == 0:
-                new_screen = cv2.putText(new_screen, f'{i + 1}', (square_x_first + 5, square_y_first - 5),
-                                         font, 0.5, (255, 255, 255), 1)
-            if seat == 0:
-                # creating a green square
-                new_screen = cv2.rectangle(new_screen, (space + square_x_first, space + square_y_first), (square_x_second, square_y_second),
-                                       (0, 255, 0), -1)
-            else:
-                # creating a red square
-                new_screen = cv2.rectangle(new_screen, (space + square_x_first, space + square_y_first), (square_x_second, square_y_second),
-                                       (0, 0, 255), -1)
-            i += 1
-        j += 1
-    # Adding the screen position
-    new_screen = cv2.rectangle(new_screen, (margin_x, 0),
-                               (screen_width - margin_x, 7), (255, 0, 0), -1)
-    new_screen = cv2.putText(new_screen, 'EKRAN', (screen_width//2, 10), font, 0.4,
-                             (255, 255, 255), 1)
-
-    new_screen = display_text_info(new_screen, movie, font)
+    # Display the available options
     while True:
-        cv2.imshow(f'Seats for {movie}', new_screen)
-        if cv2.waitKey(0) & 0xFF == 27: # if the pressed key is ESC exit and destroy the window
-            cv2.destroyAllWindows()
+        # Taking input from the user
+        key = stdscr.getch()
+        # Clearing the screen
+        stdscr.clear()
+        if key == curses.KEY_UP and current_row_idx > 0:
+            current_row_idx -= 1
+        elif key == curses.KEY_DOWN and current_row_idx < (len(movie_list) - 1):
+            current_row_idx += 1
+        elif key == curses.KEY_ENTER or key in [10, 13]: #  Enter key
+            chosen_movie = movie_list[current_row_idx]
+            stdscr.addstr(0, 0, f'Wybrany film to: "{chosen_movie}"')
+            stdscr.refresh()
+            # Displaying the window for 2 seconds
+            time.sleep(2)
+            # Returning the chosen movie
+            return chosen_movie
+        elif key == 27: #  The ESC key
             break
 
-
-# Automate it with selenium?
-movies = ['A WIĘC WOJNA', 'ABRAHAM LINCOLN: ŁOWCA WAMPIRÓW', 'ABSOLUTNIE FANTASTYCZNE: FILM', 'ACH ŚPIJ KOCHANIE', 'AD ASTRA', 'ADOLF H. JA WAM POKAŻĘ', 'ADRENALINA 2. POD NAPIĘCIEM', 'ADWOKAT', 'AFONIA I PSZCZOŁY', 'AFTER', 'AGENCI', 'AGENT I PÓŁ']
-
-display_movies(movies)
-
-chosen_movie = 'A WIEC WOJNA'
-
-screen_height = 410
-screen_width = 850
-
-seats = np.zeros([7, 30], dtype=np.int)
-screen = np.zeros([screen_height, screen_width, 3], np.uint8)
-
-row_indices = {
-                'A': 0,
-                'B': 1,
-                'C': 2,
-                'D': 3,
-                'E': 4,
-                'F': 5,
-                'G': 6
-               }
-
-seats[4,5] = 1
-seats[4,6] = 1
-
-margin_x = 50
-margin_y = 120
-space = 6
+        display_menu(stdscr, current_row_idx)
+        stdscr.refresh()
 
 
-show_seats(screen, seats, chosen_movie, row_indices)
+# def main(stdscr):
+#     # Disabling the cursor blinking
+#     curses.curs_set(0)
+#     # Initializing a color pair
+#     curses.init_pair(1, curses.COLOR_RED, curses.COLOR_YELLOW)  # background color, foreground color
+#
+#     height, width = stdscr.getmaxyx()
+#     text = 'Hello!'
+#
+#     # Setting window size
+#     x = width//2 - len(text)//2
+#     y = height//2
+#
+#     # Choosing the color pair 1 and turning it on
+#     stdscr.attron(curses.color_pair(1))
+#     # Adding text to our window
+#     stdscr.addstr(y, x, text)
+#     # Turning off the color pair
+#     stdscr.attroff(curses.color_pair(1))
+#     # Refreshing the window
+#     stdscr.refresh()
+#     # Displaying the window for 3 seconds
+#     time.sleep(3)
 
-chosen_movie = 'DRUGI FILM'
-seats[4,5] = 1
-seats[4,7] = 1
-show_seats(screen, seats, chosen_movie, row_indices)
-
-np.savetxt(f'{chosen_movie}.csv', seats, delimiter=',')
-movie_seats = np.genfromtxt(f'{chosen_movie}.csv', delimiter=',')
-print(movie_seats)
-
-'''
-- Każdy film ma swój plik csv który wczytujemy w momencie wyboru i ukazujemy za pomocą funkcji show_seats().
-np.savetxt(f'{chosen_movie}.csv', seats, delimiter=',')
-movie_seats = np.genfromtxt(f'{chosen_movie}.csv', delimiter=',')
-print(movie_seats)
-
-- Indeksowanie rzędów za pomocą liter i wykorzystać słownik do klucz:index np. 'a'.upper():0, 'b'.upper():1
-- Dorobić interaktywne menu za pomocą curses?
-- Dodać informacje gdzie znajduje się ekran
-'''
-
+# chosen_movie = curses.wrapper(main_menu)
+# print(chosen_movie)
