@@ -14,11 +14,13 @@ def display_menu(stdscr, selected_row_idx):
     stdscr.addstr(height - 2, 1, 'Aby wyjsc nacisnij ESC')
     # Printing each movie on the screen
     for i, row in enumerate(movie_list):
+        # Setting movie title position
         x = width//2 - len(row)//2
         y = height//2 - len(movie_list)//2 + i  # Starting from the center
         if i == selected_row_idx:
             # Choosing the color pair 1 and turning it on
             stdscr.attron(curses.color_pair(1))
+            # Printing movie title
             stdscr.addstr(y, x, row)
             stdscr.attroff(curses.color_pair(1))
         else:
@@ -35,8 +37,13 @@ def main_menu(stdscr):
     curses.init_pair(1, curses.COLOR_BLACK, curses.COLOR_WHITE)  # background color, foreground color
     current_row_idx = 0
 
-    # Showing the menu
-    display_menu(stdscr, current_row_idx)
+    # Checking if the movie list exists and if it contains any movies
+    if len(movie_list) != 0 and movie_list is not None:
+        # Showing the menu
+        display_menu(stdscr, current_row_idx)
+    else:
+        print('Brak filmów :(')
+        return
 
     # Display the available options
     while True:
@@ -57,14 +64,16 @@ def main_menu(stdscr):
             # Returning the chosen movie
             return chosen_movie
         elif key == 27:  # The ESC key
+            return False  # returning False if the ESC key is pressed
             break
 
+        # Displaying the menu
         display_menu(stdscr, current_row_idx)
-        stdscr.refresh()
+        stdscr.refresh()  # refreshing the screen
 
 
+# URL to a movie data set
 url = 'https://gist.githubusercontent.com/tiangechen/b68782efa49a16edaf07dc2cdaa855ea/raw/0c794a9717f18b094eabab2cd6a6b9a226903577/movies.csv'
 
 # Getting an array of movie titles
 movie_list = get_movie_titles(url)
-# print(movie_list)

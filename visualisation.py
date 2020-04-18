@@ -1,5 +1,6 @@
 import cv2
 from os import system
+from time import sleep
 
 
 def display_chosen_seats(chosen_seats):
@@ -10,15 +11,40 @@ def display_chosen_seats(chosen_seats):
         print(f'Rząd {seat[0]} Miejsce {seat[1]}')
 
 
+def get_num_places():
+    '''Assures the inserted number of places is an integer'''
+    try:
+        num_places = int(input('Ile miejsc zarezerwowac?: '))
+        if num_places < 0:
+            raise ValueError
+        return num_places
+    except ValueError:
+        print('Ilość miejsc do zarezerwowania musi być dodatnim numerem całkowitym!')
+        sleep(1.5)
+        return get_num_places()
+
+
 def book_seats(seats_array):
     '''Books seats for the movie'''
-    num_places = int(input('Ile miejsc zarezerwowac?: '))
+
+    # Get the number of places to book
+    num_places = get_num_places()
+    if num_places == 0:
+        print('Zapraszamy ponownie!')
+        sleep(1.5)
+        # If the reservation is correct destroy the window
+        cv2.destroyAllWindows()
+        # Clear the screen
+        system('cls')
+        return seats_array
+
+    # Creating ann array for the chosen places
     places = []
-    i = 1  # seat number
+    i = 1  # Seat number for customer's information
     while len(places) != num_places:  # while num_places aren't correctly chosen
         print(f'Wybór miejsca {i}')
         # If place is not taken:
-        row = input('Rząd: ').upper()
+        row = input('Rząd: ').strip().upper()
         if row in row_indices.keys():  # Row has to be in dict keys A-G
             try:
                 place = int(input('Numer miejsca: '))
@@ -34,14 +60,18 @@ def book_seats(seats_array):
                         continue
                 else:
                     raise ValueError  # raise the value error - place has to be an int from 1 to 30
-            except ValueError:
+            except ValueError:  # place has to be an int from 1 to 30
                 print('Miejsce musi byc numerem całkowitym od 1 do 30!')
-        else:
+        else:  # incorrect row
             print('Nieprawidłowy rząd!')
 
-    system('cls')  # clear the screen
+    # If the reservation is correct destroy the window
+    cv2.destroyAllWindows()
+    # Clear the screen
+    system('cls')
     print('Dziekujemy za rezerwacje :)')
     display_chosen_seats(places)  # display the chosen seats
+    sleep(1.5)
     return seats_array  # returns a modified array
 
 
@@ -54,12 +84,12 @@ def display_text_info(scr, movie, font, seats_param):
     screen_with_text = cv2.putText(screen_with_text, movie, (margin_x, 35), font, 0.7, (255, 255, 255), 1)
     # Display taken places
     screen_with_text = cv2.putText(screen_with_text, f'Liczba osob: {taken_seats}', (margin_x, 60), font, 0.7, (255, 255, 255), 1)
-    return screen_with_text
+    return screen_with_text  # return the screen with text info added
 
 
 def show_seats(scr, seats_param, movie: str):
     '''Displays the cinema hall with all places'''
-    if movie == None:
+    if movie is None:  # if the move wasn't chosen
         print('Do zobaczenia nastepnym razem!')
         return
 
@@ -67,7 +97,6 @@ def show_seats(scr, seats_param, movie: str):
     new_screen = scr.copy()  # making a copy of the screen array
     # Setting a font
     font = cv2.FONT_HERSHEY_DUPLEX
-
     # Creating a square for each seat in a row
     for j, row in enumerate(seats_param):
         new_screen = cv2.putText(new_screen, f'{tuple(row_indices.keys())[j]}', (margin_x - 10, margin_y - 20 + 37 * (j+1)),
@@ -94,12 +123,12 @@ def show_seats(scr, seats_param, movie: str):
                                          font, 0.5, (255, 255, 255), 1)
             if seat == 0:
                 # creating a green square
-                new_screen = cv2.rectangle(new_screen, (space + square_x_first, space + square_y_first), (square_x_second, square_y_second),
-                                       (0, 255, 0), -1)
+                new_screen = cv2.rectangle(new_screen, (space + square_x_first, space + square_y_first),
+                                           (square_x_second, square_y_second), (0, 255, 0), -1)
             else:
                 # creating a red square
-                new_screen = cv2.rectangle(new_screen, (space + square_x_first, space + square_y_first), (square_x_second, square_y_second),
-                                       (0, 0, 255), -1)
+                new_screen = cv2.rectangle(new_screen, (space + square_x_first, space + square_y_first),
+                                           (square_x_second, square_y_second), (0, 0, 255), -1)
 
     # Adding a blue rectangle at the screen top - movie screen
     new_screen = cv2.rectangle(new_screen, (margin_x, 0),
@@ -110,13 +139,15 @@ def show_seats(scr, seats_param, movie: str):
 
     # Displaying text info on the screen
     new_screen = display_text_info(new_screen, movie, font, seats_param)
-    while True:  # showing the image
+    while True:
+        # Showing the cinema hall image
         cv2.imshow(f'Seats for {movie}', new_screen)
+        # Getting the pressed key
         key = cv2.waitKey(0) & 0xFF
         if key == 27:  # if the pressed key is ESC exit, destroy the window and break the loop
             cv2.destroyAllWindows()
             break
-        elif key in (10, 13):  # Enter key
+        elif key in (10, 13):  # if ENTER key - start the booking
             print('Przechodzę do rezerwacji miejsc')
             return book_seats(seats_param)  # return the new array with chosen seats
 
