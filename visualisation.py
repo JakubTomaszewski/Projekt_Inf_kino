@@ -72,6 +72,7 @@ def book_seats(seats_array):
     print('Dziekujemy za rezerwacje :)')
     display_chosen_seats(places)  # display the chosen seats
     sleep(1.5)
+    system('cls')
     return seats_array  # returns a modified array
 
 
