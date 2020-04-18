@@ -1,10 +1,12 @@
 import time
 import curses
+from meta_data import get_movie_titles
 
-movie_list = ['A WIĘC WOJNA', 'ABRAHAM LINCOLN: ŁOWCA WAMPIRÓW', 'ABSOLUTNIE FANTASTYCZNE: FILM', 'ACH ŚPIJ KOCHANIE', 'AD ASTRA', 'ADOLF H. JA WAM POKAŻĘ', 'ADRENALINA 2. POD NAPIĘCIEM', 'ADWOKAT', 'AFONIA I PSZCZOŁY', 'AFTER', 'AGENCI', 'AGENT I PÓŁ']
+# movie_list = ['A WIĘC WOJNA', 'ABRAHAM LINCOLN: ŁOWCA WAMPIRÓW', 'ABSOLUTNIE FANTASTYCZNE: FILM', 'ACH ŚPIJ KOCHANIE', 'AD ASTRA', 'ADOLF H. JA WAM POKAŻĘ', 'ADRENALINA 2. POD NAPIĘCIEM', 'ADWOKAT', 'AFONIA I PSZCZOŁY', 'AFTER', 'AGENCI', 'AGENT I PÓŁ']
 
 
 def display_menu(stdscr, selected_row_idx):
+    '''Displays all the movies'''
     # Clear the screen
     stdscr.clear()
     # Getting the screen size
@@ -29,6 +31,7 @@ def display_menu(stdscr, selected_row_idx):
 
 
 def main_menu(stdscr):
+    '''Creates an interactive menu with movies'''
     curses.curs_set(0)
     # Initializing a color pair
     curses.init_pair(1, curses.COLOR_BLACK, curses.COLOR_WHITE)  # background color, foreground color
@@ -43,11 +46,11 @@ def main_menu(stdscr):
         key = stdscr.getch()
         # Clearing the screen
         stdscr.clear()
-        if key == curses.KEY_UP and current_row_idx > 0:
+        if key == curses.KEY_UP and current_row_idx > 0:  # go up
             current_row_idx -= 1
-        elif key == curses.KEY_DOWN and current_row_idx < (len(movie_list) - 1):
+        elif key == curses.KEY_DOWN and current_row_idx < (len(movie_list) - 1):  # go down
             current_row_idx += 1
-        elif key == curses.KEY_ENTER or key in [10, 13]: #  Enter key
+        elif key == curses.KEY_ENTER or key in [10, 13]:  # if Enter key, the movie has been chosen
             chosen_movie = movie_list[current_row_idx]
             stdscr.addstr(0, 0, f'Wybrany film to: "{chosen_movie}"')
             stdscr.refresh()
@@ -55,36 +58,15 @@ def main_menu(stdscr):
             time.sleep(2)
             # Returning the chosen movie
             return chosen_movie
-        elif key == 27: #  The ESC key
+        elif key == 27:  # The ESC key
             break
 
         display_menu(stdscr, current_row_idx)
         stdscr.refresh()
 
 
-# def main(stdscr):
-#     # Disabling the cursor blinking
-#     curses.curs_set(0)
-#     # Initializing a color pair
-#     curses.init_pair(1, curses.COLOR_RED, curses.COLOR_YELLOW)  # background color, foreground color
-#
-#     height, width = stdscr.getmaxyx()
-#     text = 'Hello!'
-#
-#     # Setting window size
-#     x = width//2 - len(text)//2
-#     y = height//2
-#
-#     # Choosing the color pair 1 and turning it on
-#     stdscr.attron(curses.color_pair(1))
-#     # Adding text to our window
-#     stdscr.addstr(y, x, text)
-#     # Turning off the color pair
-#     stdscr.attroff(curses.color_pair(1))
-#     # Refreshing the window
-#     stdscr.refresh()
-#     # Displaying the window for 3 seconds
-#     time.sleep(3)
+url = 'https://gist.githubusercontent.com/tiangechen/b68782efa49a16edaf07dc2cdaa855ea/raw/0c794a9717f18b094eabab2cd6a6b9a226903577/movies.csv'
 
-# chosen_movie = curses.wrapper(main_menu)
-# print(chosen_movie)
+# Getting an array of movie titles
+movie_list = get_movie_titles(url)
+# print(movie_list)
