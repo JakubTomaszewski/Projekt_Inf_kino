@@ -1,1 +1,1 @@
-# Projekt sali kinowej
+# Cinema seat selection system
