@@ -1,5 +1,5 @@
 import numpy as np
-# from meta_data import get_movie_titles
+from meta_data import get_movie_titles
 
 
 def create_seats_array(movies, num_rows, num_seats):
@@ -39,6 +39,8 @@ rows = 7
 seats = 30
 
 
+# # Creating empty report files
+# # URL with movie data
 # url = 'https://gist.githubusercontent.com/tiangechen/b68782efa49a16edaf07dc2cdaa855ea/raw/0c794a9717f18b094eabab2cd6a6b9a226903577/movies.csv'
 #
 # # Getting an array of movie titles
