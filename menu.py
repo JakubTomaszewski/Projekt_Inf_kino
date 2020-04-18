@@ -2,8 +2,6 @@ import time
 import curses
 from meta_data import get_movie_titles
 
-# movie_list = ['A WIĘC WOJNA', 'ABRAHAM LINCOLN: ŁOWCA WAMPIRÓW', 'ABSOLUTNIE FANTASTYCZNE: FILM', 'ACH ŚPIJ KOCHANIE', 'AD ASTRA', 'ADOLF H. JA WAM POKAŻĘ', 'ADRENALINA 2. POD NAPIĘCIEM', 'ADWOKAT', 'AFONIA I PSZCZOŁY', 'AFTER', 'AGENCI', 'AGENT I PÓŁ']
-
 
 def display_menu(stdscr, selected_row_idx):
     '''Displays all the movies'''

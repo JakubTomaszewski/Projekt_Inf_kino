@@ -29,6 +29,7 @@ def save_csv_data(chosen_movie, seats_array):
 rows = 7
 seats = 30
 
+
 # url = 'https://gist.githubusercontent.com/tiangechen/b68782efa49a16edaf07dc2cdaa855ea/raw/0c794a9717f18b094eabab2cd6a6b9a226903577/movies.csv'
 #
 # # Getting an array of movie titles
