@@ -3,15 +3,15 @@ import curses
 from meta_data import get_movie_titles
 
 
-def display_menu(stdscr, selected_row_idx):
+def display_menu(stdscr, selected_row_idx: int):
     '''Displays all the movies'''
     # Clear the screen
     stdscr.clear()
     # Getting the screen size
     height, width = stdscr.getmaxyx()
     # Printing some info on the screen
-    stdscr.addstr(2, 1, 'DOSTĘPNE FILMY:')
-    stdscr.addstr(height - 2, 1, 'Aby wyjsc nacisnij ESC')
+    stdscr.addstr(2, 1, 'AVAILABLE FILMS:')
+    stdscr.addstr(height - 2, 1, 'Press ESC to exit')
     # Printing each movie on the screen
     for i, row in enumerate(movie_list):
         # Setting movie title position
@@ -42,7 +42,7 @@ def main_menu(stdscr):
         # Showing the menu
         display_menu(stdscr, current_row_idx)
     else:
-        print('Brak filmów :(')
+        print('No movies available :(')
         return
 
     # Display the available options
@@ -57,7 +57,7 @@ def main_menu(stdscr):
             current_row_idx += 1
         elif key == curses.KEY_ENTER or key in [10, 13]:  # if Enter key, the movie has been chosen
             chosen_movie = movie_list[current_row_idx]
-            stdscr.addstr(0, 0, f'Wybrany film to: "{chosen_movie}"')
+            stdscr.addstr(0, 0, f'The chosen movie is: "{chosen_movie}"')
             stdscr.refresh()
             # Displaying the window for 2 seconds
             time.sleep(2)

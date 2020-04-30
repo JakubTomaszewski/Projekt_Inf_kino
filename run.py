@@ -5,6 +5,10 @@ from menu import main_menu
 import numpy as np
 
 
+rows = 7
+seats = 30
+
+
 # Setting screen parameters
 screen_height = 410
 screen_width = 850

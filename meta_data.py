@@ -6,12 +6,13 @@ class BadGatewayException(Exception):
         super().__init__('Incorrect URL')
 
 
-def get_movie_titles(url):
+def get_movie_titles(url: str):
     try:
         # Loading movie data
         movies_df = pd.read_csv(url)
     except Exception:  # if the url is incorrect raise an exception
         raise BadGatewayException
+        return
 
     # Getting only the titles column and some rows
     movie_titles = movies_df.loc[60:, 'Film']
