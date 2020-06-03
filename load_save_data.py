@@ -23,6 +23,7 @@ class IncorrectShape(Exception):
 class FileError(Exception):
     def __init__(self, message, inner_exception=None, movie=None):
         super().__init__(message)
+        self.message = message
         self.inner_exception = inner_exception
         self.movie = movie
 
@@ -53,12 +54,15 @@ def create_seats_array(movies, num_rows: int, num_seats: int):
             # Adding report info to the file
             try:
                 txt_info = create_txt_info(movie, seats_array)
-                if isinstance(movie, str) and ':' in movie:
+                movie = str(movie)
+                if ':' in movie:
                     # Replacing special characters for a valid filename
                     movie = movie.replace(':', '')
 
                 # Saving the zeros array
-                np.savetxt(f'.\movies\{movie}.csv', seats_array, delimiter=',', fmt='%1d', header=txt_info)
+                path = f'.\movies\{movie}.csv'
+                # path = f'.\movies\{movie}{"" if movie[-4:] == ".csv" or movie[-4:] == ".txt" else ".csv"}'
+                np.savetxt(path, seats_array, delimiter=',', fmt='%1d', header=txt_info)
                 return
             except IncorrectArrayType as e:
                 print(f'Could not create an array for {e.movie}')

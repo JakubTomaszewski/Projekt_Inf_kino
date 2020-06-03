@@ -12,6 +12,5 @@ url = 'https://gist.githubusercontent.com/tiangechen/b68782efa49a16edaf07dc2cdaa
 # Getting an array of movie titles
 movie_list = get_movie_titles(url)
 if movie_list is not None:
-    print('git jest')
     # Creating an zeros array for each movie
     create_seats_array(movie_list, rows, seats)

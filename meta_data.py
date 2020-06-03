@@ -1,4 +1,6 @@
 import pandas as pd
+import numpy as np
+import os
 
 
 def get_movie_titles(url: str):
@@ -16,3 +18,18 @@ def get_movie_titles(url: str):
         print('File or URL could not be found')
     except ValueError:
         print('Incorrect path')
+
+
+def get_titles_dir(path=None):
+    if path is None:
+        return
+    try:
+        movies = [''.join(movie.split('.')[:-1]) for movie in np.array(os.listdir(path))]
+        return movies
+    except PermissionError:
+        print('Could not open the directory')
+    except OSError:
+        print('Incorrect path')
+
+
+# print(get_titles_dir('./movies'))

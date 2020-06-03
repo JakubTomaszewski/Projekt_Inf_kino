@@ -8,7 +8,7 @@ class TooSmallScreen(Exception):
         super().__init__('Too small screen')
 
 
-def display_menu(stdscr, selected_row_idx: int):
+def display_menu(stdscr, selected_row_idx: int, movie_list):
     '''Displays all the movies'''
     # Clear the screen
     stdscr.clear()
@@ -38,7 +38,7 @@ def display_menu(stdscr, selected_row_idx: int):
     stdscr.refresh()
 
 
-def main_menu(stdscr):
+def main_menu(stdscr, movie_list):
     '''Creates an interactive menu with movies'''
     curses.curs_set(0)
     # Initializing a color pair
@@ -49,7 +49,7 @@ def main_menu(stdscr):
     if len(movie_list) != 0 and movie_list is not None:
         # Showing the menu
         try:
-            display_menu(stdscr, current_row_idx)
+            display_menu(stdscr, current_row_idx, movie_list)
         except TooSmallScreen:
             raise
     else:
@@ -78,12 +78,12 @@ def main_menu(stdscr):
             return  # returning False if the ESC key is pressed
 
         # Displaying the menu
-        display_menu(stdscr, current_row_idx)
+        display_menu(stdscr, current_row_idx, movie_list)
         stdscr.refresh()  # refreshing the screen
 
 
-# URL to a movie data set
-url = 'https://gist.githubusercontent.com/tiangechen/b68782efa49a16edaf07dc2cdaa855ea/raw/0c794a9717f18b094eabab2cd6a6b9a226903577/movies.csv'
-
-# Getting an array of movie titles
-movie_list = get_movie_titles(url)
+# # URL to a movie data set
+# url = 'https://gist.githubusercontent.com/tiangechen/b68782efa49a16edaf07dc2cdaa855ea/raw/0c794a9717f18b094eabab2cd6a6b9a226903577/movies.csv'
+#
+# # Getting an array of movie titles
+# movie_list = get_movie_titles(url)

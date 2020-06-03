@@ -65,13 +65,12 @@ def finalize_booking(places_array: list):
     system('cls')
 
 
-def book_seats(seats_array: list, row_indices):
+def get_row():
+    pass
+
+
+def book_seats(seats_array: list, row_indices, num_places):
     '''Books seats for the movie'''
-    # Get the number of places to book
-    num_places = get_num_places()
-    if num_places == 0:
-        say_goodbye()
-        return seats_array
 
     # Creating ann array for the chosen places
     places = []
@@ -95,7 +94,7 @@ def book_seats(seats_array: list, row_indices):
                         print('This place is already taken!\nPlease choose another one')
                         continue
                     else:
-                        print('Incorrect array, should contain zeros and ones')
+                        raise IncorrectArrayData('Incorrect array, should contain zeros and ones')
                 else:
                     raise ValueError  # raise the value error - place has to be an int from 1 to 30
             except ValueError:  # place has to be an int from 1 to 30
@@ -203,9 +202,18 @@ def display_image(movie: str, screen, seats_param: np.ndarray, row_indices):
         elif key in (10, 13):  # if ENTER key - start the booking
             try:
                 # if the cinema hall array is not full
-                if seats_param.sum() != (seats_param.shape[0] + seats_param.shape[1]):
+                if seats_param.sum() != (seats_param.shape[0] * seats_param.shape[1]):
                     print('Proceeding to place booking')
-                    return book_seats(seats_param, row_indices)  # return the new array with chosen seats
+
+                    # Get the number of places to book
+                    num_places = get_num_places()
+                    if num_places == 0:
+                        say_goodbye()
+                        return
+
+                    # get_row(seats_param, row_indices)
+                    # get_seat(seats_param)
+                    return book_seats(seats_param, row_indices, num_places)  # return the new array with chosen seats
                 else:
                     print('No available places for this movie :(')
                     sleep(2)
@@ -213,6 +221,8 @@ def display_image(movie: str, screen, seats_param: np.ndarray, row_indices):
                     return
             except ValueError:
                 raise IncorrectArrayData('Incorrect data type in array, numeric required', movie)
+            except IncorrectArrayData:
+                raise
 
 
 def show_seats(scr, seats_param: np.ndarray, row_indices, movie: str, screen_height, screen_width):
@@ -221,8 +231,6 @@ def show_seats(scr, seats_param: np.ndarray, row_indices, movie: str, screen_hei
         return
 
     # Setting screen parameters
-    # margin_x = 50
-    # margin_y = 120
     margin_x = screen_height // 5
     margin_y = 120
     space = 6
