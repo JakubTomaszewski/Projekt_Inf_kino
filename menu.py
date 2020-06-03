@@ -3,6 +3,11 @@ import curses
 from meta_data import get_movie_titles
 
 
+class TooSmallScreen(Exception):
+    def __init__(self, message):
+        super().__init__('Too small screen')
+
+
 def display_menu(stdscr, selected_row_idx: int):
     '''Displays all the movies'''
     # Clear the screen
@@ -13,18 +18,21 @@ def display_menu(stdscr, selected_row_idx: int):
     stdscr.addstr(2, 1, 'AVAILABLE FILMS:')
     stdscr.addstr(height - 2, 1, 'Press ESC to exit')
     # Printing each movie on the screen
-    for i, row in enumerate(movie_list):
-        # Setting movie title position
-        x = width//2 - len(row)//2
-        y = height//2 - len(movie_list)//2 + i  # Starting from the center
-        if i == selected_row_idx:
-            # Choosing the color pair 1 and turning it on
-            stdscr.attron(curses.color_pair(1))
-            # Printing movie title
-            stdscr.addstr(y, x, row)
-            stdscr.attroff(curses.color_pair(1))
-        else:
-            stdscr.addstr(y, x, row)
+    try:
+        for i, row in enumerate(movie_list):
+            # Setting movie title position
+            x = width//2 - len(row)//2
+            y = height//2 - len(movie_list)//2 + i  # Starting from the center
+            if i == selected_row_idx:
+                # Choosing the color pair 1 and turning it on
+                stdscr.attron(curses.color_pair(1))
+                # Printing movie title
+                stdscr.addstr(y, x, row)
+                stdscr.attroff(curses.color_pair(1))
+            else:
+                stdscr.addstr(y, x, row)
+    except curses.error:
+        raise TooSmallScreen('The screen is too small')
 
     # Refreshing screen
     stdscr.refresh()
@@ -40,7 +48,10 @@ def main_menu(stdscr):
     # Checking if the movie list exists and if it contains any movies
     if len(movie_list) != 0 and movie_list is not None:
         # Showing the menu
-        display_menu(stdscr, current_row_idx)
+        try:
+            display_menu(stdscr, current_row_idx)
+        except TooSmallScreen:
+            raise
     else:
         print('No movies available :(')
         return
@@ -64,8 +75,7 @@ def main_menu(stdscr):
             # Returning the chosen movie
             return chosen_movie
         elif key == 27:  # The ESC key
-            return False  # returning False if the ESC key is pressed
-            break
+            return  # returning False if the ESC key is pressed
 
         # Displaying the menu
         display_menu(stdscr, current_row_idx)

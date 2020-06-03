@@ -1,6 +1,7 @@
 from load_save_data import create_seats_array
 from meta_data import get_movie_titles
 
+# Setting the cinema hall size
 rows = 7
 seats = 30
 
@@ -10,5 +11,7 @@ url = 'https://gist.githubusercontent.com/tiangechen/b68782efa49a16edaf07dc2cdaa
 
 # Getting an array of movie titles
 movie_list = get_movie_titles(url)
-# Creating an zeros array for each movie
-create_seats_array(movie_list, rows, seats)
+if movie_list is not None:
+    print('git jest')
+    # Creating an zeros array for each movie
+    create_seats_array(movie_list, rows, seats)
