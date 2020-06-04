@@ -34,7 +34,7 @@ def create_txt_info(movie, seats_array: np.ndarray):
     try:
         return f'Title: {movie}\n' + '+'*45 + f'\nSeats taken: {int(seats_array.sum())}\n'
     except (TypeError, ValueError):
-        raise IncorrectArrayData('Incorrect data type in array, numeric required', movie)
+        raise IncorrectArrayData('Incorrect data type in array, integer required', movie)
 
 
 def create_seats_array(movies, num_rows: int, num_seats: int):

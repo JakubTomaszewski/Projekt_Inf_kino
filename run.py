@@ -1,14 +1,10 @@
-from load_save_data import get_csv_data, save_csv_data, FileError, IncorrectArrayData
+from load_save_data import get_csv_data, save_csv_data, FileError, IncorrectArrayData, IncorrectArrayType, IncorrectShape
 from meta_data import get_movie_titles, get_titles_dir
 from visualisation import show_seats
 import curses
 from menu import main_menu, TooSmallScreen
 import numpy as np
 
-
-# Setting screen parameters
-screen_height = 700
-screen_width = 1100
 
 # Row indices as keys and their numeric indices as values
 row_indices = {
@@ -30,10 +26,16 @@ row_indices = {
                 'P': 15,
 }
 
+# Setting screen parameters
+screen_height = len(row_indices) * 50
+screen_width = 1100
+
+
 # Creating screen for cv2
 screen = np.zeros([screen_height, screen_width, 3], np.uint8)
 
-''' # Getting the titles from a database
+''' 
+# Getting the titles from a database
 # URL to a movie data set
 url = 'https://gist.githubusercontent.com/tiangechen/b68782efa49a16edaf07dc2cdaa855ea/raw/0c794a9717f18b094eabab2cd6a6b9a226903577/movies.csv'
 
@@ -70,6 +72,8 @@ while True:  # loop assures we return to the selecting movies menu
     except IncorrectArrayData as e:
         print(f'An error occurred while loading the file for movie: {e.movie}')
         break
+    except (IncorrectArrayType, IncorrectShape):
+        print('An error occurred while booking the seats')
 
     try:
         # Saving the new cinema hall array
@@ -78,5 +82,5 @@ while True:  # loop assures we return to the selecting movies menu
         print(f'''An error occurred while saving the file for {e.movie}
 ({e.inner_exception})''')
         break
-
-
+    except NameError:
+        break
