@@ -1,4 +1,6 @@
+import cv2
 import pytest
+import curses
 import numpy as np
 from load_save_data import IncorrectArrayType, IncorrectArrayData, IncorrectShape
 from visualisation import (display_chosen_seats,
@@ -15,6 +17,8 @@ from visualisation import (display_chosen_seats,
                            display_image,
                            show_seats,
                            IncorrectlyChosenSeats,
+                           IncorrectFont,
+                           IncorrectCoordinates
                            )
 
 
@@ -33,13 +37,13 @@ def test_display_chosen_seats():
 def test_validate_num_places():
     seats_array = np.array([[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
                             [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]])
-    assert validate_num_places(seats_array, 28) is True
-    assert validate_num_places(seats_array, 0) is True
+    assert validate_num_places(seats_array, 28) == 28
+    assert validate_num_places(seats_array, 0) == 0
 
-    assert validate_num_places(seats_array, 29) is False  # max 2*14 = 28
-    assert validate_num_places(seats_array, -2) is False
-    assert validate_num_places(seats_array, 1.2) is False
-    assert validate_num_places(seats_array, [1]) is False
+    assert validate_num_places(seats_array, 29) is None  # max 2*14 = 28
+    assert validate_num_places(seats_array, -2) is None
+    assert validate_num_places(seats_array, 1.2) is None
+    assert validate_num_places(seats_array, [1]) is None
 
 
 def test_validate_num_places_list():
@@ -56,40 +60,6 @@ def test_validate_num_places_str():
                             [0, 0, 0, '0', 0, 0, 0, '0', 0, 0, 0, 0, 0, 0]])
     with pytest.raises(IncorrectArrayData):
         validate_num_places(seats_array, 3)
-
-
-def test_display_text_info():
-    pass
-
-
-def test_create_square():
-    pass
-
-
-def test_display_row_indices():
-    pass
-
-
-def test_display_key_info():
-    # a co jeśli ekran będzie zbyt mały?
-    pass
-
-
-def test_display_screen():
-    pass
-
-
-def test_create_row():
-    # a co jeśli ekran będzie zbyt mały?
-    pass
-
-
-def test_show_seats_empty():
-    pass
-
-
-def test_show_seats_full():
-    pass
 
 
 def test_validate_row():
@@ -162,3 +132,155 @@ def test_validate_place_str():
     seats_array = np.array([['0', 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
                             [0, 0, 0, '0', 0, 0, 0, '0', 0, 0, 0, 0, 0, 0]])
     assert validate_place(3, seats_array) is True
+
+
+def test_display_text_info():
+    seats_array = np.array([[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                            [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]])
+    scr = np.zeros([20, 20, 3], np.uint8)
+    font = cv2.FONT_HERSHEY_DUPLEX
+
+    assert display_text_info(scr, 'a movie', font, seats_array, 15) is not scr
+    assert display_text_info(scr, 'a movie', 4, seats_array, 15) is not scr
+
+    with pytest.raises(IncorrectFont):
+        display_text_info(scr, 'a movie', 'incorrect font', seats_array, 15)
+
+    inc_seats_array = np.array([['0', 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                                [0, 0, 0, '0', 0, 0, 0, '0', 0, 0, 0, 0, 0, 0]])
+
+    with pytest.raises(IncorrectArrayData):
+        display_text_info(scr, 'a movie', font, inc_seats_array, 15)
+
+    with pytest.raises(IncorrectCoordinates):
+        display_text_info(scr, 'a movie', font, inc_seats_array, -1)
+
+
+def test_create_square():
+    scr = np.zeros([20, 20, 3], np.uint8)
+
+    assert create_square(scr, 10, 10, 15, 15, (0, 255, 0)) is scr
+
+    with pytest.raises(IncorrectCoordinates):
+        create_square(scr, -10, 10, 15, 15, (0, 255, 0))
+
+
+def test_display_row_indices():
+    scr = np.zeros([20, 20, 3], np.uint8)
+    font = cv2.FONT_HERSHEY_DUPLEX
+    row_indices = {
+        'A': 0,
+        'B': 1,
+        'C': 2,
+        'D': 3
+    }
+
+    display_row_indices(scr, font, row_indices, 3, 2, 5)
+
+    with pytest.raises(IncorrectCoordinates):
+        display_row_indices(scr, font, row_indices, 3, -1, -5)
+
+    with pytest.raises(IncorrectFont):
+        display_row_indices(scr, 'inc font', row_indices, 3, 2, 5)
+
+    with pytest.raises(IncorrectShape):
+        display_row_indices(scr, font, row_indices, 10, 2, 5)
+
+
+def test_display_key_info():
+    scr = np.zeros([20, 20, 3], np.uint8)
+    font = cv2.FONT_HERSHEY_DUPLEX
+
+    display_key_info(scr, font, 10, 100)
+
+    with pytest.raises(IncorrectCoordinates):
+        display_key_info(scr, font, -10, 100)
+        display_key_info(scr, font, 10, -100)
+
+    with pytest.raises(IncorrectFont):
+        display_key_info(scr, 'inc font', 10, 100)
+
+
+def test_display_screen():
+    scr = np.zeros([20, 20, 3], np.uint8)
+    font = cv2.FONT_HERSHEY_DUPLEX
+
+    with pytest.raises(IncorrectCoordinates):
+        display_screen(scr, font, -10, 200)
+        display_screen(scr, font, 10, -200)
+
+    with pytest.raises(IncorrectFont):
+        display_screen(scr, 'inc font', 10, 200)
+
+
+def test_create_row():
+    scr = np.zeros([20, 20, 3], np.uint8)
+    font = cv2.FONT_HERSHEY_DUPLEX
+    row = [0, 1, 0, 0, 0]
+
+    with pytest.raises(IncorrectCoordinates):
+        create_row(row, 2, scr, font, 15, -12)
+        create_row(row, 2, scr, font, -15, 12)
+        create_row(row, 2, scr, font, 15, 12, -3)
+
+    with pytest.raises(IncorrectFont):
+        create_row(row, 0, scr, 'inc font', 15, 12, 3)
+
+
+def test_display_image():
+    scr = np.zeros([20, 20, 3], np.uint8)
+    row_indices = {
+        'A': 0,
+        'B': 1,
+        'C': 2
+    }
+    seats_array = np.array([[0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0],
+                           [0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0],
+                           [0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0]])
+
+    assert display_image(None, scr, seats_array, row_indices) is None
+
+    inc_row_indices = {
+        'A': 0,
+        'B': 1
+    }
+    with pytest.raises(IncorrectShape):
+        display_image('movie', scr, seats_array, inc_row_indices)
+
+
+def test_display_image_list():
+    scr = np.zeros([20, 20, 3], np.uint8)
+    row_indices = {
+        'A': 0,
+        'B': 1,
+        'C': 2
+    }
+    seats_array = [[0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0],
+                   [0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0],
+                   [0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0]]
+
+    with pytest.raises(IncorrectArrayType):
+        display_image('movie', scr, seats_array, row_indices)
+
+
+def test_show_seats():
+    scr = np.zeros([20, 20, 3], np.uint8)
+    row_indices = {
+        'A': 0,
+        'B': 1,
+        'C': 2
+    }
+    seats_array = np.array([[0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0],
+                            [0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0],
+                            [0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0]])
+
+    assert show_seats(scr, seats_array, row_indices, None, 200, 300) is None
+    assert show_seats(scr, seats_array, row_indices, 'movie', -200, 300) is None
+    assert show_seats(scr, seats_array, row_indices, 'movie', 200, -300) is None
+    assert show_seats(scr, seats_array, row_indices, 'movie', 200, 0) is None
+    assert show_seats(scr, seats_array, row_indices, 'movie', 0, 20) is None
+
+    empty_seats_array = np.array([])
+
+    with pytest.raises(IncorrectArrayData):
+        show_seats(scr, empty_seats_array, row_indices, 'movie', 20, 20)

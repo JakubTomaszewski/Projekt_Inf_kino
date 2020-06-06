@@ -1,3 +1,12 @@
+'''
+Create_Report_Files Script
+--------------------------
+
+This script allows querying movie titles from a url
+and creating a csv file for each movie
+'''
+
+
 from load_save_data import create_seats_array
 from meta_data import get_movie_titles
 

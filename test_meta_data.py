@@ -26,7 +26,7 @@ def test_get_movie_titles_incorrect_list():
 
 
 def test_get_titles_dir():
-    titles = ['(500) Days of Summer.csv', '27 Dresses.csv', 'A Dangerous Method.csv', 'A Serious Man.csv', 'Across the Universe.csv', 'Beginners.csv', 'Dear John.csv', 'Enchanted.csv', 'Fireproof.csv', 'Four Christmases.csv', 'Ghosts of Girlfriends Past.csv', 'Gnomeo and Juliet.csv', 'Going the Distance.csv', 'Good Luck Chuck.csv', "He's Just Not That Into You.csv", 'High School Musical 3 Senior Year.csv', 'pelny_plik.csv', 'pusty_plik.csv']
+    titles = ['(500) Days of Summer.csv', '27 Dresses.csv', 'A Dangerous Method.csv', 'A Serious Man.csv', 'Across the Universe.csv', 'many_cols.csv', 'Dear John.csv', 'Enchanted.csv', 'Fireproof.csv', 'Four Christmases.csv', 'Ghosts of Girlfriends Past.csv', 'Gnomeo and Juliet.csv', 'Going the Distance.csv', 'Good Luck Chuck.csv', "He's Just Not That Into You.csv", 'High School Musical 3 Senior Year.csv', 'pelny_plik.csv', 'pusty_plik.csv']
 
     assert get_titles_dir('./movies') == titles
 
