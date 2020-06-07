@@ -126,10 +126,10 @@ def say_goodbye():
     # If the reservation is correct destroy the window
     cv2.destroyAllWindows()
     # Clear the screen
-    # Windows
-    system('cls')
-    # Linux
-    # system('clear')
+    # LINUX
+    system('clear')
+    # WINDOWS
+    # system('cls')
 
 
 def finalize_booking(places_array):
@@ -148,10 +148,10 @@ def finalize_booking(places_array):
     # If the reservation is correct destroy the window
     cv2.destroyAllWindows()
     # Clear the screen
-    # Windows
-    system('cls')
-    # Linux
-    # system('clear')
+    # LINUX
+    system('clear')
+    # WINDOWS
+    # system('cls')
     try:
         print('\nThank you for your reservation :)')
         display_chosen_seats(places_array)  # display the chosen seats
@@ -159,10 +159,10 @@ def finalize_booking(places_array):
         raise
     sleep(2)
     # Clear the screen
-    # Windows
-    system('cls')
-    # Linux
-    # system('clear')
+    # LINUX
+    system('clear')
+    # WINDOWS
+    # system('cls')
 
 
 def validate_row(row, row_indices, seats_array):
@@ -639,10 +639,10 @@ def display_image(movie, screen, seats_param: np.ndarray, row_indices):
                 if seats_param.sum() != (seats_param.shape[0] * seats_param.shape[1]):
                     print('Proceeding to place booking')
                     sleep(1.5)
-                    # Windows
-                    system('cls')
-                    # Linux
-                    # system('clear')
+                    # LINUX
+                    system('clear')
+                    # WINDOWS
+                    # system('cls')
 
                     while True:
                         # Get the number of places to book

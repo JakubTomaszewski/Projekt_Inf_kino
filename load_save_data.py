@@ -111,7 +111,10 @@ def create_seats_array(movies, num_rows: int, num_seats: int):
                 movie = repair_title(movie)
 
                 # Saving the zeros array
-                path = f'.\movies\{movie}.csv'
+                # LINUX
+                path = f'./movies/{movie}.csv'
+                # WINDOWS
+                # path = f'.\movies\{movie}.csv'
                 np.savetxt(path, seats_array, delimiter=',', fmt='%1d', header=txt_info)
             except IncorrectArrayType as e:
                 print(f'Could not create an array for {e.movie}')

@@ -1,3 +1,11 @@
+'''
+Run Module
+----------
+
+Module used for running the whole program
+'''
+
+
 from load_save_data import get_csv_data, save_csv_data, repair_title, FileError, IncorrectArrayData, IncorrectArrayType, IncorrectShape
 from meta_data import get_movie_titles, get_titles_dir
 from visualisation import show_seats, IncorrectFont, IncorrectCoordinates
@@ -7,6 +15,10 @@ import numpy as np
 
 
 def main():
+    '''
+    Initializes row indices, path to directory with movie csv files, runs the whole program
+    '''
+
     # Row indices as keys and their numeric indices as values
     row_indices = {
                     'A': 0,
@@ -27,13 +39,6 @@ def main():
                     'P': 15,
     }
 
-    # # Setting screen parameters
-    # screen_height = len(row_indices) * 50
-    # screen_width = 1200
-    #
-    # # Creating screen for cv2
-    # screen = np.zeros([screen_height, screen_width, 3], np.uint8)
-
     ''' 
     # Getting the titles from a database
     # URL to a movie data set
@@ -44,7 +49,10 @@ def main():
     '''
 
     # Path to movies directory
+    # LINUX
     path = './movies/'
+    # WINDOWS
+    # path = '.\movies\'
 
     # Getting all movie titles from a specific directory
     movie_list = get_titles_dir(path)
@@ -60,18 +68,17 @@ def main():
             chosen_movie = repair_title(chosen_movie)
         except (TooSmallScreen, IndexError):
             print('Could not open the menu')
-            break
+            return -1
         except FileError as e:
             print(e.message)
-            break
+            return -2
 
         # Creating seats array
         try:
-            # Windows
-            movie_path = f'.\movies\{chosen_movie}.csv'
-
-            # Linux
-            # movie_path = f'./movies/{chosen_movie}.csv'
+            # LINUX
+            movie_path = f'./movies/{chosen_movie}.csv'
+            # WINDOWS
+            # movie_path = f'.\movies\{chosen_movie}.csv'
 
             seats_array = get_csv_data(chosen_movie, movie_path)
             # Setting screen parameters
@@ -93,10 +100,10 @@ def main():
             print(f'''An error occurred while loading the file for movie: {e.movie}
     {e.message}
     ({e.inner_exception if e.inner_exception is not None else ""})''')
-            break
+            return -3
         except IncorrectArrayData as e:
             print(f'An error occurred while loading the file for movie: {e.movie}')
-            break
+            return -4
         except (IncorrectArrayType, IncorrectShape):
             print('An error occurred while booking the seats')
         except (IncorrectFont, IncorrectCoordinates) as e:
@@ -108,9 +115,11 @@ def main():
         except FileError as e:
             print(f'''An error occurred while saving the file for {e.movie}
     ({e.inner_exception})''')
-            break
+            return -5
         except NameError:
-            break
+            print('No movie chosen')
+            return
+    return
 
 
 if __name__ == '__main__':
