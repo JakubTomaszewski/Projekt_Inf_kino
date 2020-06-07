@@ -1,6 +1,5 @@
-pytest
-numpy==1.18.2
+curses-util==0.0.25
+numpy==1.18.5
 opencv-python==4.2.0.34
-openpyxl==3.0.3
-windows-curses==2.1.0
-pandas==1.0.3
+pandas==1.0.4
+pytest==5.4.3
